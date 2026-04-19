@@ -3,140 +3,507 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Smart OCR · Shift Reader</title>
+  <title>SmartOCR · Shift Reader</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
   <script src="https://unpkg.com/tesseract.js@v5.0.0/dist/tesseract.min.js"></script>
 </head>
 <body>
-<div class="app-shell">
 
-  <!-- ── Top Nav ── -->
-  <nav class="top-nav">
-    <a class="brand" href="#">
-      <div class="brand-icon">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+<!-- ── Mobile Block ── -->
+<div class="mobile-block" id="mobileBlock">
+  <div class="mobile-block-inner">
+    <div class="mobile-icon">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="5" y="2" width="14" height="20" rx="2"/>
+        <line x1="12" y1="18" x2="12" y2="18"/>
+      </svg>
+      <div class="mobile-cross">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </div>
+    </div>
+    <h1 class="mobile-title">Desktop Only</h1>
+    <p class="mobile-msg">SmartOCR is optimized for desktop use.<br>Please access this system from a desktop or laptop computer.</p>
+    <div class="mobile-badge">Minimum: 768px viewport</div>
+  </div>
+</div>
+
+<!-- ── App Shell ── -->
+<div class="app-shell" id="appShell">
+
+  <!-- ── Sidebar ── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <rect x="3" y="3" width="18" height="18" rx="2"/>
           <path d="M3 9h18M3 15h18M9 3v18"/>
         </svg>
       </div>
-      <span class="brand-name">SmartOCR</span>
-    </a>
-
-    <div class="nav-steps">
-      <div class="step-pill active" id="step1"><span class="dot"></span> Upload</div>
-      <div class="step-pill" id="step2"><span class="dot"></span> Process</div>
-      <div class="step-pill" id="step3"><span class="dot"></span> Results</div>
-    </div>
-  </nav>
-
-  <!-- ── Left Panel: Upload ── -->
-  <aside class="left-panel">
-    <div class="panel-head">
-      <h2>Input</h2>
-      <p>Upload, drag &amp; drop, or paste a schedule (Image or Text)</p>
+      <div class="logo-text-wrap">
+        <span class="logo-name">SmartOCR</span>
+        <span class="logo-sub">Shift Reader</span>
+      </div>
+      <div class="logo-version">v2.0</div>
     </div>
 
-    <label for="imageInput" class="drop-zone" id="dropZone">
-      <input type="file" id="imageInput" accept="image/*" />
-      <div class="upload-icon-wrap">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-          <polyline points="17 8 12 3 7 8"/>
-          <line x1="12" y1="3" x2="12" y2="15"/>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Workspace</div>
+      <a href="#" class="nav-item" data-page="dashboard" id="nav-dashboard">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+          <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
         </svg>
-      </div>
-      <div class="upload-label">
-        <strong>Drop image or text here</strong>
-        Click to browse files
-      </div>
-      <div class="kbd-hint">
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-        Or paste with <kbd>Ctrl</kbd>+<kbd>V</kbd>
-      </div>
-    </label>
-
-    <div id="imagePreviewContainer" class="hidden">
-      <img id="imagePreview" src="" alt="Preview" />
-    </div>
-
-    <div class="left-footer">
-      <span id="fileName">No file selected</span>
-      <button id="processBtn" class="btn btn-process" disabled>
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        Dashboard
+      </a>
+      <a href="#" class="nav-item active" data-page="scanner" id="nav-scanner">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
         </svg>
-        Process
-      </button>
+        OCR Scanner
+        <span class="nav-badge">Active</span>
+      </a>
+      <a href="#" class="nav-item" data-page="history" id="nav-history">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 3h6l2 3h10a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/>
+        </svg>
+        History
+        <span class="nav-count" id="historyCount">0</span>
+      </a>
+
+      <div class="nav-section-label" style="margin-top:16px;">System</div>
+      <a href="#" class="nav-item" data-page="settings" id="nav-settings">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+        Settings
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="privacy-chip">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+        100% Client-side
+      </div>
+      <div class="footer-brand">by Antigravity AI</div>
     </div>
   </aside>
 
-  <!-- ── Right Panel: Results ── -->
-  <main class="right-panel">
-    <div class="right-head">
-      <div class="right-title">
-        Extracted Shifts
-        <span class="count-badge hidden" id="countBadge">0</span>
+  <!-- ── Main Area ── -->
+  <div class="main-area">
+
+    <!-- ── Topbar ── -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <div class="breadcrumb">
+          <span class="breadcrumb-root">SmartOCR</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+          <span class="breadcrumb-current" id="pageBreadcrumb">OCR Scanner</span>
+        </div>
       </div>
-      <div class="action-buttons">
-        <button id="resetBtn" class="btn btn-reset hidden">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-          Reset Data
-        </button>
-        <button id="copyBtn" class="btn btn-copy hidden">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          Copy Data
-        </button>
+
+      <div class="topbar-center">
+        <div class="step-track">
+          <div class="step-node active" id="step1">
+            <span class="step-num">01</span>
+            <span class="step-label">Upload</span>
+          </div>
+          <div class="step-line" id="stepLine1"></div>
+          <div class="step-node" id="step2">
+            <span class="step-num">02</span>
+            <span class="step-label">Process</span>
+          </div>
+          <div class="step-line" id="stepLine2"></div>
+          <div class="step-node" id="step3">
+            <span class="step-num">03</span>
+            <span class="step-label">Results</span>
+          </div>
+        </div>
       </div>
-    </div>
 
-    <!-- Empty state -->
-    <div class="right-empty" id="emptyState">
-      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="3" y="3" width="18" height="18" rx="2"/>
-        <path d="M3 9h18M3 15h18M9 3v18"/>
-      </svg>
-      <span>Scan results will appear here</span>
-    </div>
-
-    <!-- Processing state -->
-    <div class="status-overlay hidden" id="status">
-      <div class="spinner"></div>
-      <span id="statusText">Processing…</span>
-      <div class="progress-track">
-        <div id="progressFill" class="progress-fill"></div>
+      <div class="topbar-right">
+        <div class="status-pill" id="systemStatus">
+          <span class="status-dot ready"></span>
+          <span class="status-text" id="statusPillText">System Ready</span>
+        </div>
       </div>
-    </div>
+    </header>
 
-    <!-- Table (hidden until results) -->
-    <div class="table-area hidden" id="tableArea">
-      <table id="dataTable">
-        <thead>
-          <tr>
-            <th>No</th>
-            <th>Name</th>
-            <th>Shift</th>
-            <th>Time</th>
-            <th style="width: 40px"></th>
-          </tr>
-        </thead>
-        <tbody id="tableBody"></tbody>
-      </table>
-    </div>
+    <!-- ── Page: Dashboard ── -->
+    <main class="page-content hidden" id="page-dashboard">
+      <div class="page-header">
+        <h1 class="page-title">Dashboard</h1>
+        <p class="page-sub">Overview of your OCR activity</p>
+      </div>
 
-    <!-- Raw output collapsible at bottom -->
-    <div class="raw-bar hidden" id="rawBar">
-      <button class="raw-toggle-btn" id="rawToggle">
-        <span style="display:flex;align-items:center;gap:0.4rem;">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-          Raw OCR Output
-        </span>
-        <svg class="raw-chevron" id="rawChevron" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-      </button>
-      <textarea id="rawText" class="hidden" readonly></textarea>
-    </div>
-  </main>
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-icon green">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+          </div>
+          <div class="stat-body">
+            <div class="stat-value" id="dashTotalScans">0</div>
+            <div class="stat-label">Total Scans</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon blue">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+          </div>
+          <div class="stat-body">
+            <div class="stat-value" id="dashTotalEntries">0</div>
+            <div class="stat-label">Entries Extracted</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon orange">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+          </div>
+          <div class="stat-body">
+            <div class="stat-value" id="dashLastActivity">—</div>
+            <div class="stat-label">Last Activity</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon purple">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          </div>
+          <div class="stat-body">
+            <div class="stat-value" id="dashSuccessRate">—</div>
+            <div class="stat-label">Success Rate</div>
+          </div>
+        </div>
+      </div>
 
-</div>
+      <div class="dash-bottom">
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <h3>Recent Sessions</h3>
+            <button class="btn btn-ghost btn-sm" onclick="switchPage('scanner')">New Scan →</button>
+          </div>
+          <div id="dashRecentList" class="dash-recent-list">
+            <div class="empty-inline">No sessions yet. Start your first scan.</div>
+          </div>
+        </div>
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <h3>Shift Distribution</h3>
+          </div>
+          <div class="shift-dist" id="shiftDist">
+            <div class="dist-row">
+              <span class="dist-label morning">Morning</span>
+              <div class="dist-bar-wrap"><div class="dist-bar" id="distMorning" style="width:0%"></div></div>
+              <span class="dist-pct" id="distMorningPct">0%</span>
+            </div>
+            <div class="dist-row">
+              <span class="dist-label afternoon">Afternoon</span>
+              <div class="dist-bar-wrap"><div class="dist-bar" id="distAfternoon" style="width:0%"></div></div>
+              <span class="dist-pct" id="distAfternoonPct">0%</span>
+            </div>
+            <div class="dist-row">
+              <span class="dist-label night">Night</span>
+              <div class="dist-bar-wrap"><div class="dist-bar" id="distNight" style="width:0%"></div></div>
+              <span class="dist-pct" id="distNightPct">0%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- ── Page: Scanner ── -->
+    <main class="page-content" id="page-scanner">
+      <div class="scanner-layout">
+
+        <!-- LEFT: Input -->
+        <section class="panel panel-input">
+          <div class="panel-header">
+            <div class="panel-label-chip">INPUT</div>
+            <span class="panel-hint">Drag, drop, or paste (Ctrl+V)</span>
+          </div>
+
+          <!-- Drop zone -->
+          <label for="imageInput" class="drop-zone" id="dropZone">
+            <input type="file" id="imageInput" accept="image/*" />
+            <div class="drop-icon-wrap">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
+            </div>
+            <div class="drop-copy">
+              <p class="drop-title">Drop schedule image here</p>
+              <p class="drop-hint">or click to browse · Ctrl+V to paste</p>
+            </div>
+            <div class="drop-tags">
+              <span class="tag">PNG</span><span class="tag">JPG</span><span class="tag">WEBP</span><span class="tag">TEXT</span>
+            </div>
+          </label>
+
+          <!-- Preview -->
+          <div id="imagePreviewContainer" class="preview-box hidden">
+            <div class="preview-topbar">
+              <div class="preview-file-info">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="3" width="18" height="18" rx="2"/>
+                </svg>
+                <span class="preview-filename" id="fileName">—</span>
+              </div>
+              <button class="icon-btn" id="clearPreview" title="Remove">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+              </button>
+            </div>
+            <img id="imagePreview" src="" alt="Preview" />
+          </div>
+
+          <!-- Controls -->
+          <div class="input-controls">
+            <div class="control-group">
+              <label class="ctrl-label" for="langSelect">OCR Language</label>
+              <div class="select-wrap">
+                <select id="langSelect" class="select-input">
+                  <option value="eng+ind" selected>ENG + IND (Bilingual)</option>
+                  <option value="eng">English only</option>
+                  <option value="ind">Indonesian only</option>
+                </select>
+                <svg class="select-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+            </div>
+            <button id="processBtn" class="btn btn-primary" disabled>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+              Process Image
+            </button>
+          </div>
+        </section>
+
+        <!-- RIGHT: Results -->
+        <section class="panel panel-results">
+          <div class="results-topbar">
+            <div class="panel-label-chip">RESULTS</div>
+            <div class="results-meta hidden" id="resultsMeta">
+              <span class="count-chip" id="countBadge">0</span>
+              <span class="count-label">entries found</span>
+            </div>
+            <div class="results-actions hidden" id="resultsActions">
+              <button id="resetBtn" class="btn btn-ghost btn-sm">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                Clear
+              </button>
+              <button id="exportTxtBtn" class="btn btn-secondary btn-sm">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Export TXT
+              </button>
+              <button id="copyBtn" class="btn btn-primary btn-sm">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                Copy for Sheets
+              </button>
+            </div>
+          </div>
+
+          <!-- Empty state -->
+          <div class="empty-state" id="emptyState">
+            <div class="empty-icon-wrap">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                <path d="M3 9h18M3 15h18M9 3v18"/>
+              </svg>
+            </div>
+            <p class="empty-title">No data extracted yet</p>
+            <p class="empty-sub">Upload a schedule image or paste text<br>to extract shift data</p>
+          </div>
+
+          <!-- Processing state -->
+          <div class="processing-state hidden" id="status">
+            <div class="process-ring">
+              <svg class="process-svg" viewBox="0 0 44 44">
+                <circle class="process-track" cx="22" cy="22" r="18" fill="none" stroke-width="3"/>
+                <circle class="process-progress" id="progressCircle" cx="22" cy="22" r="18" fill="none" stroke-width="3" stroke-dasharray="113.1" stroke-dashoffset="113.1"/>
+              </svg>
+              <span class="process-pct" id="processPct">0%</span>
+            </div>
+            <p class="process-label" id="statusText">Initializing…</p>
+            <p class="process-sub">This may take a few seconds</p>
+          </div>
+
+          <!-- Table area -->
+          <div class="table-wrap hidden" id="tableArea">
+            <table class="data-table" id="dataTable">
+              <thead>
+                <tr>
+                  <th class="col-no">#</th>
+                  <th class="col-name">Name</th>
+                  <th class="col-shift">Shift</th>
+                  <th class="col-time">Time</th>
+                  <th class="col-action"></th>
+                </tr>
+              </thead>
+              <tbody id="tableBody"></tbody>
+            </table>
+          </div>
+
+          <!-- Raw output -->
+          <div class="raw-section hidden" id="rawBar">
+            <button class="raw-trigger" id="rawToggle">
+              <span class="raw-trigger-label">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                Raw OCR Output
+              </span>
+              <svg class="raw-chevron" id="rawChevron" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <textarea id="rawText" class="raw-output hidden" readonly placeholder="OCR text output will appear here…"></textarea>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- ── Page: History ── -->
+    <main class="page-content hidden" id="page-history">
+      <div class="page-header">
+        <h1 class="page-title">Session History</h1>
+        <p class="page-sub">Scans saved in your local browser</p>
+        <div class="page-header-actions">
+          <button class="btn btn-ghost btn-sm" id="clearHistoryBtn">Clear All</button>
+        </div>
+      </div>
+
+      <div class="history-search-bar">
+        <div class="search-input-wrap">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <input type="text" id="historySearch" placeholder="Search by filename or date…" class="search-input"/>
+        </div>
+      </div>
+
+      <div id="historyList" class="history-list">
+        <div class="empty-state">
+          <div class="empty-icon-wrap">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+              <path d="M3 3h6l2 3h10a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/>
+            </svg>
+          </div>
+          <p class="empty-title">No history yet</p>
+          <p class="empty-sub">Completed scans will appear here</p>
+        </div>
+      </div>
+    </main>
+
+    <!-- ── Page: Settings ── -->
+    <main class="page-content hidden" id="page-settings">
+      <div class="page-header">
+        <h1 class="page-title">Settings</h1>
+        <p class="page-sub">Configure OCR behavior and preferences</p>
+      </div>
+
+      <div class="settings-grid">
+        <div class="settings-section">
+          <h3 class="settings-section-title">OCR Engine</h3>
+
+          <div class="setting-row">
+            <div class="setting-info">
+              <span class="setting-label">Default Language</span>
+              <span class="setting-desc">Language model used for text recognition</span>
+            </div>
+            <div class="select-wrap">
+              <select id="settingLang" class="select-input">
+                <option value="eng+ind" selected>ENG + IND</option>
+                <option value="eng">English only</option>
+                <option value="ind">Indonesian only</option>
+              </select>
+              <svg class="select-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-info">
+              <span class="setting-label">Page Segmentation Mode</span>
+              <span class="setting-desc">Mode 4 (column) is optimal for schedules</span>
+            </div>
+            <div class="select-wrap">
+              <select id="settingPSM" class="select-input">
+                <option value="4" selected>Mode 4 — Single column</option>
+                <option value="6">Mode 6 — Uniform block</option>
+                <option value="3">Mode 3 — Fully automatic</option>
+              </select>
+              <svg class="select-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h3 class="settings-section-title">Behavior</h3>
+
+          <div class="setting-row">
+            <div class="setting-info">
+              <span class="setting-label">Auto-save to History</span>
+              <span class="setting-desc">Save each scan result to local history</span>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="settingAutoSave" checked>
+              <span class="toggle-track"></span>
+            </label>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-info">
+              <span class="setting-label">Image Upscaling</span>
+              <span class="setting-desc">Enhance small images before OCR</span>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="settingUpscale" checked>
+              <span class="toggle-track"></span>
+            </label>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-info">
+              <span class="setting-label">Deduplicate Names</span>
+              <span class="setting-desc">Remove duplicate entries automatically</span>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="settingDedup" checked>
+              <span class="toggle-track"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h3 class="settings-section-title">About</h3>
+          <div class="about-block">
+            <div class="about-row"><span>Version</span><span>2.0.0</span></div>
+            <div class="about-row"><span>Engine</span><span>Tesseract.js v5</span></div>
+            <div class="about-row"><span>Processing</span><span>100% Client-side</span></div>
+            <div class="about-row"><span>Built by</span><span>Antigravity AI</span></div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+  </div><!-- /main-area -->
+</div><!-- /app-shell -->
+
 <script src="script.js"></script>
 </body>
 </html>
