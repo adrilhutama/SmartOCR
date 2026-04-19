@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart OCR · Shift Reader</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://unpkg.com/tesseract.js@v5.0.0/dist/tesseract.min.js"></script>
+</head>
+<body>
+<div class="app-shell">
+
+  <!-- ── Top Nav ── -->
+  <nav class="top-nav">
+    <a class="brand" href="#">
+      <div class="brand-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="2"/>
+          <path d="M3 9h18M3 15h18M9 3v18"/>
+        </svg>
+      </div>
+      <span class="brand-name">SmartOCR</span>
+    </a>
+
+    <div class="nav-steps">
+      <div class="step-pill active" id="step1"><span class="dot"></span> Upload</div>
+      <div class="step-pill" id="step2"><span class="dot"></span> Process</div>
+      <div class="step-pill" id="step3"><span class="dot"></span> Results</div>
+    </div>
+  </nav>
+
+  <!-- ── Left Panel: Upload ── -->
+  <aside class="left-panel">
+    <div class="panel-head">
+      <h2>Input</h2>
+      <p>Upload, drag &amp; drop, or paste a schedule (Image or Text)</p>
+    </div>
+
+    <label for="imageInput" class="drop-zone" id="dropZone">
+      <input type="file" id="imageInput" accept="image/*" />
+      <div class="upload-icon-wrap">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="17 8 12 3 7 8"/>
+          <line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+      </div>
+      <div class="upload-label">
+        <strong>Drop image or text here</strong>
+        Click to browse files
+      </div>
+      <div class="kbd-hint">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Or paste with <kbd>Ctrl</kbd>+<kbd>V</kbd>
+      </div>
+    </label>
+
+    <div id="imagePreviewContainer" class="hidden">
+      <img id="imagePreview" src="" alt="Preview" />
+    </div>
+
+    <div class="left-footer">
+      <span id="fileName">No file selected</span>
+      <button id="processBtn" class="btn btn-process" disabled>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        Process
+      </button>
+    </div>
+  </aside>
+
+  <!-- ── Right Panel: Results ── -->
+  <main class="right-panel">
+    <div class="right-head">
+      <div class="right-title">
+        Extracted Shifts
+        <span class="count-badge hidden" id="countBadge">0</span>
+      </div>
+      <div class="action-buttons">
+        <button id="resetBtn" class="btn btn-reset hidden">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+          Reset Data
+        </button>
+        <button id="copyBtn" class="btn btn-copy hidden">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Copy Data
+        </button>
+      </div>
+    </div>
+
+    <!-- Empty state -->
+    <div class="right-empty" id="emptyState">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="18" height="18" rx="2"/>
+        <path d="M3 9h18M3 15h18M9 3v18"/>
+      </svg>
+      <span>Scan results will appear here</span>
+    </div>
+
+    <!-- Processing state -->
+    <div class="status-overlay hidden" id="status">
+      <div class="spinner"></div>
+      <span id="statusText">Processing…</span>
+      <div class="progress-track">
+        <div id="progressFill" class="progress-fill"></div>
+      </div>
+    </div>
+
+    <!-- Table (hidden until results) -->
+    <div class="table-area hidden" id="tableArea">
+      <table id="dataTable">
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Name</th>
+            <th>Shift</th>
+            <th>Time</th>
+            <th style="width: 40px"></th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+
+    <!-- Raw output collapsible at bottom -->
+    <div class="raw-bar hidden" id="rawBar">
+      <button class="raw-toggle-btn" id="rawToggle">
+        <span style="display:flex;align-items:center;gap:0.4rem;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          Raw OCR Output
+        </span>
+        <svg class="raw-chevron" id="rawChevron" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <textarea id="rawText" class="hidden" readonly></textarea>
+    </div>
+  </main>
+
+</div>
+<script src="script.js"></script>
+</body>
+</html>
